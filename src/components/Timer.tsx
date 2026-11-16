@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { MODES, type Mode } from '../types'
 import { useTimer } from '../hooks/useTimer'
+import { stopSound, unlockAudio } from '../sounds'
 
 interface TimerProps {
   mode: Mode
@@ -20,7 +21,12 @@ function formatTime(seconds: number) {
 
 export function Timer({ mode, minutes, onModeChange, onComplete }: TimerProps) {
   const total = minutes * 60
-  const { remaining, isRunning, toggle, reset } = useTimer(total, onComplete)
+  const { remaining, isRunning, toggle: toggleTimer, reset } = useTimer(total, onComplete)
+  const toggle = useCallback(() => {
+    unlockAudio()
+    stopSound()
+    toggleTimer()
+  }, [toggleTimer])
   const progress = 1 - remaining / total
   const [mm, ss] = formatTime(remaining).split(':')
 

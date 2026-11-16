@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Timer } from './components/Timer'
 import { TaskList } from './components/TaskList'
 import { Settings } from './components/Settings'
@@ -10,26 +10,7 @@ import {
   type Mode,
   type Task,
 } from './types'
-
-function playChime() {
-  try {
-    const ctx = new AudioContext()
-    ;[0, 0.25, 0.5].forEach((delay, i) => {
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.frequency.value = [660, 880, 990][i]
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay)
-      gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + delay + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.4)
-      osc.connect(gain).connect(ctx.destination)
-      osc.start(ctx.currentTime + delay)
-      osc.stop(ctx.currentTime + delay + 0.45)
-    })
-    setTimeout(() => ctx.close(), 1500)
-  } catch {
-    /* audio non disponible */
-  }
-}
+import { DEFAULT_SOUND, playSound, type SoundSettings } from './sounds'
 
 export default function App() {
   const [mode, setMode] = useState<Mode>('focus')
@@ -40,6 +21,8 @@ export default function App() {
     'pomoflow:durations',
     DEFAULT_DURATIONS,
   )
+  const [storedSound, setSound] = useLocalStorage<SoundSettings>('pomoflow:sound', DEFAULT_SOUND)
+  const sound = useMemo(() => ({ ...DEFAULT_SOUND, ...storedSound }), [storedSound])
   const [showSettings, setShowSettings] = useState(false)
   const durations = { ...DEFAULT_DURATIONS, ...storedDurations }
   const closeSettings = useCallback(() => setShowSettings(false), [])
@@ -51,7 +34,7 @@ export default function App() {
   }, [mode])
 
   const handleComplete = useCallback(() => {
-    playChime()
+    playSound(sound)
     if (mode === 'focus') {
       const next = focusCount + 1
       setFocusCount(next)
@@ -66,7 +49,7 @@ export default function App() {
     } else {
       setMode('focus')
     }
-  }, [mode, focusCount, activeTaskId, setFocusCount, setTasks])
+  }, [mode, focusCount, activeTaskId, sound, setFocusCount, setTasks])
 
   const addTask = (title: string, estimatedPomodoros: number) => {
     const task: Task = {
@@ -147,8 +130,10 @@ export default function App() {
       {showSettings && (
         <Settings
           durations={durations}
-          onSave={(d) => {
+          sound={sound}
+          onSave={(d, snd) => {
             setDurations(d)
+            setSound(snd)
             setShowSettings(false)
           }}
           onClose={closeSettings}
