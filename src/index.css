@@ -781,3 +781,90 @@ input {
   border: 2px solid var(--ink);
   box-shadow: 3px 3px 0 var(--accent);
 }
+
+/* ---------- Sons ---------- */
+
+.modal {
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.section-gap {
+  margin-top: 14px;
+}
+
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.sound-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  padding: 10px 12px;
+  background: #fff;
+  border: var(--border);
+  transition: transform 0.08s, box-shadow 0.08s, background-color 0.2s;
+}
+
+.sound-option:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.sound-option.selected {
+  background: var(--accent);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-2px, -2px);
+}
+
+.sound-name {
+  font-weight: 700;
+}
+
+.sound-desc {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: var(--border);
+  padding: 10px 12px;
+}
+
+.volume-row.disabled {
+  opacity: 0.45;
+}
+
+.volume-row input[type='range'] {
+  flex: 1;
+  accent-color: var(--ink);
+}
+
+.volume-value {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  min-width: 3.2em;
+  text-align: right;
+}
+
+.play-btn {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  background: var(--accent-soft);
+  font-size: 0.8rem;
+}
+
+.play-btn:hover:not(:disabled) {
+  background: var(--accent);
+}
