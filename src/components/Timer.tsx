@@ -21,7 +21,11 @@ function formatTime(seconds: number) {
 
 export function Timer({ mode, minutes, onModeChange, onComplete }: TimerProps) {
   const total = minutes * 60
-  const { remaining, isRunning, toggle: toggleTimer, reset } = useTimer(total, onComplete)
+  const { remaining, isRunning, toggle: toggleTimer, reset } = useTimer(
+    total,
+    onComplete,
+    `${mode}-${minutes}`,
+  )
   const toggle = useCallback(() => {
     unlockAudio()
     stopSound()
