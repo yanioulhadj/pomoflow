@@ -13,7 +13,7 @@ import {
 import { DEFAULT_SOUND, playSound, type SoundSettings } from './sounds'
 
 export default function App() {
-  const [mode, setMode] = useState<Mode>('focus')
+  const [mode, setMode] = useLocalStorage<Mode>('pomoflow:mode', 'focus')
   const [focusCount, setFocusCount] = useLocalStorage('pomoflow:focusCount', 0)
   const [tasks, setTasks] = useLocalStorage<Task[]>('pomoflow:tasks', [])
   const [activeTaskId, setActiveTaskId] = useLocalStorage<string | null>('pomoflow:activeTask', null)
@@ -49,7 +49,7 @@ export default function App() {
     } else {
       setMode('focus')
     }
-  }, [mode, focusCount, activeTaskId, sound, setFocusCount, setTasks])
+  }, [mode, focusCount, activeTaskId, sound, setFocusCount, setTasks, setMode])
 
   const addTask = (title: string, estimatedPomodoros: number) => {
     const task: Task = {
@@ -74,6 +74,12 @@ export default function App() {
     if (id === activeTaskId) setActiveTaskId(null)
   }
 
+  const resetSessions = () => {
+    if (!window.confirm('Remettre le compteur de sessions à zéro ?')) return
+    setFocusCount(0)
+    setMode('focus')
+  }
+
   const clearDone = () => setTasks((prev) => prev.filter((t) => !t.done))
 
   return (
@@ -90,6 +96,15 @@ export default function App() {
             title="Réglages"
           >
             ⚙
+          </button>
+          <button
+            className="settings-btn reset-sessions-btn"
+            onClick={resetSessions}
+            disabled={focusCount === 0}
+            aria-label="Remettre les sessions à zéro"
+            title="Remettre les sessions à zéro"
+          >
+            Reset
           </button>
           <div className="stamp">
             <span>Session</span>
