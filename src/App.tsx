@@ -74,6 +74,12 @@ export default function App() {
     if (id === activeTaskId) setActiveTaskId(null)
   }
 
+  const resetSessions = () => {
+    if (!window.confirm('Remettre le compteur de sessions à zéro ?')) return
+    setFocusCount(0)
+    setMode('focus')
+  }
+
   const clearDone = () => setTasks((prev) => prev.filter((t) => !t.done))
 
   return (
@@ -90,6 +96,15 @@ export default function App() {
             title="Réglages"
           >
             ⚙
+          </button>
+          <button
+            className="settings-btn reset-sessions-btn"
+            onClick={resetSessions}
+            disabled={focusCount === 0}
+            aria-label="Remettre les sessions à zéro"
+            title="Remettre les sessions à zéro"
+          >
+            Reset
           </button>
           <div className="stamp">
             <span>Session</span>
